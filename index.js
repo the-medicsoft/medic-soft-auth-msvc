@@ -1,10 +1,9 @@
-const bodyParser = require('body-parser');
 let jwt = require('jsonwebtoken');
 let middleware = require('./middleware');
 
 const config = require("./config/config");
 
-const { NODE_ENV } = process.env || config;
+const NODE_ENV = process.env.NODE_ENV || config.NODE_ENV;
 
 if (NODE_ENV !== "production") {
   require("dotenv").config();
@@ -12,7 +11,8 @@ if (NODE_ENV !== "production") {
 
 const v1ApiRoutes = require("./routes/v1/");
 
-const { HOST, PORT } = process.env || config;
+const HOST = process.env.HOST || config.HOST;
+const PORT = process.env.PORT || config.PORT;
 
 const fastify = require("fastify")({
   logger: NODE_ENV !== "production" ? process.env.LOGGER : false

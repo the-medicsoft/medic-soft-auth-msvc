@@ -1,8 +1,8 @@
-const { Auth } = require("./auth");
+const {auth } = require("./auth");
 
 exports.getAuth = async (req, res) => {
   try {
-    let response = await Auth.getAuth();
+    let response = await auth.getAuth();
 
     res
       .code(response.statusCode)
@@ -12,7 +12,7 @@ exports.getAuth = async (req, res) => {
 
 exports.postAuth = async (req, res) => {
   try {
-    let response = await Auth.postAuth();
+    let response = await auth.postAuth(req, res);
 
     res
       .code(response.statusCode)

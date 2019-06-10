@@ -1,10 +1,14 @@
 let jwt = require('jsonwebtoken');
 const config = require("../config/config");
 
-auth.getAuth = async function () {
-    try {
+secret = config.SECRET;
 
-      secret = config.SECRET;
+console.log(secret);
+
+const auth = {};
+
+auth.getAuth = async function (req, res) {
+    try {
 
       let checkToken = (req, res, next) => {
         let token = req.headers['x-access-token'] || req.headers['authorization'];
@@ -43,7 +47,7 @@ auth.getAuth = async function () {
     }
 }
 
-auth.postAuth = async function(){
+auth.postAuth = async function(req, res){
   try {
         let username = req.body.username;
         let password = req.body.password;
@@ -54,39 +58,39 @@ auth.postAuth = async function(){
         if (username && password) {
           if (username === mockedUsername && password === mockedPassword) {
             let token = jwt.sign({username: username},
-              config.secret,
+              secret,
               { expiresIn: '24h' // expires in 24 hours
               }
             );
             // return the JWT token for the future API calls
-            return{
+            res.send({
               success: true,
               message: 'Authentication successful!',
               token: token
-            };
+            });
           } else {
-            return{
+            res.send({
               success: false,
               statusCode: 403,
               message: 'Incorrect username or password'
-            };
+            });
           }
         } else {
-          return{
+          res.send({
             success: false,
             statusCode: 400,
             message: 'Authentication failed! Please check the request'
-          };
+          });
         }
       }
-      index (req, reply) {
-        return{
-          success: true,
-          message: 'Index page'
-        };
-      }
-    }
-  } catch (err) {
+      // index (req, reply) {
+      //   return{
+      //     success: true,
+      //     message: 'Index page'
+      //   };
+      // }
+    // }
+   catch (err) {
     return {
         success: false,
         statusCode: 500,
@@ -95,3 +99,5 @@ auth.postAuth = async function(){
     };
   }
 }
+
+module.exports = {auth};
