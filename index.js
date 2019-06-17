@@ -1,18 +1,18 @@
-let jwt = require('jsonwebtoken');
-let middleware = require('./middleware');
-
 const config = require("./config/config");
 
-const NODE_ENV = process.env.NODE_ENV || config.NODE_ENV;
+const { NODE_ENV } = process.env || config;
 
 if (NODE_ENV !== "production") {
-  require("dotenv").config();
+  const checkEnv = require("dotenv").config();
+
+  if (checkEnv.error) {
+    throw new Error(`${checkEnv.error}...Exiting`);
+  }
 }
 
 const v1ApiRoutes = require("./routes/v1/");
 
-const HOST = process.env.HOST || config.HOST;
-const PORT = process.env.PORT || config.PORT;
+const { HOST, PORT } = process.env || config;
 
 const fastify = require("fastify")({
   logger: NODE_ENV !== "production" ? process.env.LOGGER : false
@@ -33,6 +33,7 @@ for (let apiRoute of v1ApiRoutes) {
 }
 
 fastify.get("/", (req, res) => res.send("Welcome to The MedicSoft Auth Service"));
+
 // Run the server!
 fastify.listen(PORT, HOST, err => {
   try {
@@ -47,4 +48,5 @@ fastify.listen(PORT, HOST, err => {
     console.error(err.message);
   }
 });
+
 exports.fastify = fastify;

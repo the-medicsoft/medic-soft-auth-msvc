@@ -1,103 +1,94 @@
 let jwt = require('jsonwebtoken');
-const config = require("../config/config");
 
-secret = config.SECRET;
+const { SECRET } = require("../config/config");
+const medicSoftDbMsvc = require("../config/medicSoftDbMicroserviceURLs");
 
-console.log(secret);
+async function extractToken(req) {
+  let tokenHeaders = ['x-access-token', 'authorization'];
 
-const auth = {};
+  let token = '';
 
-auth.getAuth = async function (req, res) {
-    try {
-
-      let checkToken = (req, res, next) => {
-        let token = req.headers['x-access-token'] || req.headers['authorization'];
-        if (token.startsWith('Bearer ')) {
-          token = token.slice(7, token.length);
-        }
-
-        if (token) {
-          jwt.verify(token, secret, (err, decoded) => {
-            if (err) {
-              return {
-                success: false,
-                message: 'Token is not valid'
-              };
-            } else {
-              return {
-                decoded: decoded
-              };
-              next();
-            }
-          });
-        } else {
-          return {
-            success: false,
-            message: 'Auth token is not supplied'
-          };
-        }
-      };
-    } catch (err) {
-        return {
-            success: false,
-            statusCode: 500,
-            statusText: "Internal Server Error",
-            message: err.message
-        };
+  for (let tokenHeader of tokenHeaders) {
+    if (tokenHeader in req.headers) {
+      token = req.headers[tokenHeader];
     }
+  }
+
+  return token;
 }
 
-auth.postAuth = async function(req, res){
+exports.getAuth = async (req, res, next) => {
   try {
-        let username = req.body.username;
-        let password = req.body.password;
-        // For the given username fetch user from DB
-        let mockedUsername = 'admin';
-        let mockedPassword = 'password';
+    let token = await extractToken(req);
 
-        if (username && password) {
-          if (username === mockedUsername && password === mockedPassword) {
-            let token = jwt.sign({username: username},
-              secret,
-              { expiresIn: '24h' // expires in 24 hours
-              }
-            );
-            // return the JWT token for the future API calls
-            res.send({
-              success: true,
-              message: 'Authentication successful!',
-              token: token
-            });
-          } else {
-            res.send({
-              success: false,
-              statusCode: 403,
-              message: 'Incorrect username or password'
-            });
-          }
-        } else {
+    if (token) {
+      token = token.slice(7, token.length);
+
+      jwt.verify(token, SECRET, (err, decoded) => {
+        if (err) {
           res.send({
             success: false,
-            statusCode: 400,
-            message: 'Authentication failed! Please check the request'
+            message: 'Token is not valid'
           });
+        } else {
+          res.send({ decoded });
+          next();
         }
-      }
-      // index (req, reply) {
-      //   return{
-      //     success: true,
-      //     message: 'Index page'
-      //   };
-      // }
-    // }
-   catch (err) {
-    return {
+      });
+    } else {
+      res.send({
         success: false,
-        statusCode: 500,
-        statusText: "Internal Server Error",
-        message: err.message
-    };
+        message: 'Auth token is not supplied'
+      });
+    }
+  } catch (err) {
+    res.send({
+      success: false,
+      statusCode: 500,
+      statusText: 'Internal Server Error',
+      message: err.message
+    });
   }
 }
 
-module.exports = {auth};
+exports.postAuth = async (req, res) => {
+  try {
+    let { username, password } = req.body;
+    // For the given username fetch user from DB
+    let mockedUsername = 'admin';
+    let mockedPassword = 'password';
+
+    if (username && password) {
+      if (username === mockedUsername && password === mockedPassword) {
+        let token = jwt.sign({ username }, SECRET, { expiresIn: '24h' /* expires in 24 hours */ });
+
+        // return the JWT token for the future API calls
+        res.send({
+          success: true,
+          message: 'Authentication successful!',
+          token: token
+        });
+      } else {
+        res.send({
+          success: false,
+          statusCode: 403,
+          message: 'Incorrect username or password'
+        });
+      }
+    } else {
+      res.send({
+        success: false,
+        statusCode: 400,
+        message: 'Authentication failed! Please check the request'
+      });
+    }
+  }
+  catch (err) {
+    return {
+      success: false,
+      statusCode: 500,
+      statusText: 'Internal Server Error',
+      message: err.message
+    };
+  }
+}
