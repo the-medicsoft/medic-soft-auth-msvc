@@ -1,18 +1,17 @@
 const config = require("./config/config");
 
-const { NODE_ENV } = process.env || config;
+const { NODE_ENV = config.NODE_ENV } = process.env;
 
 if (NODE_ENV !== "production") {
-  const checkEnv = require("dotenv").config();
-
-  if (checkEnv.error) {
-    throw new Error(`${checkEnv.error}...Exiting`);
-  }
+  require("dotenv").config();
 }
 
 const v1ApiRoutes = require("./routes/v1/");
 
-const { HOST, PORT } = process.env || config;
+const {
+  HOST = config.HOST,
+  PORT = config.PORT
+} = process.env;
 
 const fastify = require("fastify")({
   logger: NODE_ENV !== "production" ? process.env.LOGGER : false
