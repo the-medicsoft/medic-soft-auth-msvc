@@ -1,7 +1,8 @@
 let jwt = require('jsonwebtoken');
 
 const { SECRET } = require("../config/config");
-const medicSoftDbMsvc = require("../config/medicSoftDbMicroserviceURLs");
+const { clients } = require("../config/medicSoftDbMicroserviceURLs");
+const {axios} =require('axios');
 
 async function extractToken(req) {
   let tokenHeaders = ['x-access-token', 'authorization'];
@@ -50,6 +51,69 @@ exports.getAuth = async (req, res, next) => {
     });
   }
 }
+
+exports.signAuth=async(req,res)=>
+{
+
+let email=req.body.email;
+ axios.get(`http://localhost:4000/api/v1/clients/${email}`)
+    .then((response) => {
+     
+       const isSuccess=JSON.stringify(response.data.success);
+      //  console.log(isSuccess);
+    
+        if(isSuccess)
+        {
+            console.log('User already Exist');
+        }
+    })
+    .catch(error => 
+        {
+        if(error.response.data.statusCode===404)
+        {
+            console.log(JSON.stringify(error.response.data));
+           // console.log('here at 1')
+           
+            axios.post(client.POST,{
+              
+              firstName:req.body.firstName,
+              lastName: req.body.lastName,
+              password: req.body.password,
+              address: {
+                  line1:req.body.address.line1,
+                  line2:req.body.address.line1,
+                  city: req.body.address.city,
+                  zipCode: req.body.address.zipCode,
+                  state: req.body.address.state,
+                  country: req.body.address.country
+                
+              },
+              contacts: {
+                  
+                  phones:req.body.contacts.phones,
+                  email: req.body.contacts.email
+                
+              },
+              gender: req.body.gender
+                  
+               
+            }).then((res) => {
+                console.log(`statusCode: ${res.statusCode}`)
+                console.log(res)
+              })
+              .catch((error) => {
+                console.error(error)
+              })
+        }
+    
+        else
+        {
+            // console.log('here at 3');
+            console.log('Error',error.message);
+        }
+    });
+}
+
 
 exports.postAuth = async (req, res) => {
   try {
