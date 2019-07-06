@@ -2,7 +2,7 @@ let jwt = require('jsonwebtoken');
 
 const { SECRET } = require("../config/config");
 const { clients } = require("../config/medicSoftDbMicroserviceURLs");
-const {axios} =require('axios');
+const axios = require('axios');
 
 async function extractToken(req) {
   let tokenHeaders = ['x-access-token', 'authorization'];
@@ -56,11 +56,10 @@ exports.signAuth=async(req,res)=>
 {
 
 let email=req.body.email;
- axios.get(`http://localhost:4000/api/v1/clients/${email}`)
+ axios.get(clients.GET.clients + `${email}`)
     .then((response) => {
      
        const isSuccess=JSON.stringify(response.data.success);
-      //  console.log(isSuccess);
     
         if(isSuccess)
         {
@@ -72,7 +71,6 @@ let email=req.body.email;
         if(error.response.data.statusCode===404)
         {
             console.log(JSON.stringify(error.response.data));
-           // console.log('here at 1')
            
             axios.post(client.POST,{
               
@@ -108,22 +106,36 @@ let email=req.body.email;
     
         else
         {
-            // console.log('here at 3');
             console.log('Error',error.message);
         }
     });
 }
 
 
-exports.postAuth = async (req, res) => {
+exports.loginAuth = async (req, res) => {
   try {
-    let { username, password } = req.body;
-    // For the given username fetch user from DB
-    let mockedUsername = 'admin';
-    let mockedPassword = 'password';
+    let { email, password } = req.body;
+    console.log("I WAS HERE!!!!!!!!!");
+    console.log(clients.GET.clientByEmail +`/${email}`);
 
-    if (username && password) {
-      if (username === mockedUsername && password === mockedPassword) {
+    // For the given email fetch user from DB
+    axios.get(clients.GET.clientByEmail +`/${email}`)
+      .then((response) => {
+        const isSuccess = JSON.stringify(response.data.success);
+
+        debugger;
+        console.log("I WAS HERE too!!!!!!!!!");
+        if(isSuccess){
+          console.log("USER FOUND!!!!");
+          res.send({
+            success: true
+          })
+        }
+      }
+      )
+
+    if (email && password) {
+      if (email === mockedUsername && password === mockedPassword) {
         let token = jwt.sign({ username }, SECRET, { expiresIn: '24h' /* expires in 24 hours */ });
 
         // return the JWT token for the future API calls

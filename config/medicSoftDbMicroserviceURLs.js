@@ -8,8 +8,8 @@ const versions = {
 
 exports.clients = {
   GET: {
-    clients: `${medicSoftHost}/${versions.v1}/api/clients`,
-    clientByEmail: `${medicSoftHost}/${versions.v1}/api/clients/`
+    clients: `${medicSoftHost}/api/${versions.v1}/clients`,
+    clientByEmail: `${medicSoftHost}/api/${versions.v1}/clients`
   },
   POST: `${medicSoftHost}/${versions.v1}/clients`,
   PUT: `${medicSoftHost}/${versions.v1}/clients/`,

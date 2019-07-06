@@ -9,7 +9,7 @@ exports.authApiRoutes = [
   {
     method: "POST",
     url: "/api/v1/login",
-    handler: auth.postAuth
+    handler: auth.loginAuth
   },
   {
     method: "POST",
