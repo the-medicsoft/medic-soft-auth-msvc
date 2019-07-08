@@ -4,7 +4,7 @@ exports.authApiRoutes = [
   {
     method: "GET",
     url: "/api/v1/test",
-    handler: auth.getAuth
+    handler: auth.testAuth
   },
   {
     method: "POST",
@@ -14,6 +14,6 @@ exports.authApiRoutes = [
   {
     method: "POST",
     url: "/api/v1/signup",
-    handler: auth.signAuth
+    handler: auth.signupAuth
   }
 ];
