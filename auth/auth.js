@@ -77,13 +77,7 @@ exports.signupAuth = async (req, res) => {
         statusCode: 200,
         message: "User created"
       });
-    } else {
-      res.send({
-        success: false,
-        statusCode: 409,
-        message: "User already exists"
-      });
-    }
+    } 
   } catch (err) {
     return {
       success: err.response.data.success,
