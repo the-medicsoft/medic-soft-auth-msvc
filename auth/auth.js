@@ -3,7 +3,6 @@ let jwt = require("jsonwebtoken");
 const { SECRET } = require("../config/config");
 const { clients } = require("../config/medicSoftDbMicroserviceURLs");
 const axios = require("axios");
-var isSuccess;
 
 async function extractToken(req) {
   let tokenHeaders = ["x-access-token", "authorization"];
@@ -17,15 +16,6 @@ async function extractToken(req) {
   }
 
   return token;
-}
-
-async function checkUser(email) {
-  try {
-    let resultdata = await axios.get(clients.GET.clientByEmail + `/${email}`);
-    return resultdata;
-  } catch (err) {
-    console.error(err);
-  }
 }
 
 async function generateToken(email, clientdata) {
