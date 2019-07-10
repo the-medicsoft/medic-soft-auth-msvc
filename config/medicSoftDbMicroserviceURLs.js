@@ -12,8 +12,8 @@ exports.clients = {
     clientByEmail: `${medicSoftHost}/api/${versions.v1}/clients`
   },
   POST: {
-    clients: `${medicSoftHost}/${versions.v1}/clients`
+    clients: `${medicSoftHost}/api/${versions.v1}/clients`
   },
-  PUT: `${medicSoftHost}/${versions.v1}/clients/`,
-  DELETE: `${medicSoftHost}/${versions.v1}/clients/`
+  PUT: `${medicSoftHost}/api/${versions.v1}/clients/`,
+  DELETE: `${medicSoftHost}/api/${versions.v1}/clients/`
 };

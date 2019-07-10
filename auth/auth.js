@@ -3,7 +3,6 @@ let jwt = require("jsonwebtoken");
 const { SECRET } = require("../config/config");
 const { clients } = require("../config/medicSoftDbMicroserviceURLs");
 const axios = require("axios");
-var isSuccess;
 
 async function extractToken(req) {
   let tokenHeaders = ["x-access-token", "authorization"];
@@ -19,11 +18,6 @@ async function extractToken(req) {
   return token;
 }
 
-async function checkUser(email) {
-  let resultdata = axios.get(clients.GET.clientByEmail + `/${email}`);
-  return resultdata;
-}
-
 async function generateToken(email, clientdata) {
   tokendata = {
     email: email,
@@ -36,11 +30,7 @@ async function generateToken(email, clientdata) {
 }
 
 async function generateUser(userDetails) {
-  let resultdata = axios
-    .post(clients.POST.clients, userDetails)
-    .then(response => {
-      return response;
-    });
+  let resultdata = axios.post(clients.POST.clients, userDetails);
   return resultdata;
 }
 
@@ -79,63 +69,30 @@ exports.testAuth = async (req, res, next) => {
 //This method still needs work.
 exports.signupAuth = async (req, res) => {
   try {
-    let resultdata = await checkUser(req.body.contacts.email);
+    let resultdata = await generateUser(req.body);
 
     if (resultdata.data.success) {
-      res.send({
-        success: false,
-        statusCode: 409,
-        message: "User already exists"
-      });
-    } else {
-      console.log("DID YOU REACH");
-
-      let resultdata = await generateUser(req.body);
-      console.log(resultdata);
       res.send({
         success: true,
         statusCode: 200,
         message: "User created"
       });
-    }
+    } 
   } catch (err) {
     return {
-      success: false,
-      statusCode: 500,
-      statusText: "Internal Server Error",
-      message: err.message
+      success: err.response.data.success,
+      statusCode: err.response.data.statusCode,
+      statusText: err.response.data.statusText,
+      message: err.response.data.message
     };
   }
-
-  // axios.post(client.POST,{
-
-  //   firstName:req.body.firstName,
-  //   lastName: req.body.lastName,
-  //   password: req.body.password,
-  //   address: {
-  //       line1:req.body.address.line1,
-  //       line2:req.body.address.line1,
-  //       city: req.body.address.city,
-  //       zipCode: req.body.address.zipCode,
-  //       state: req.body.address.state,
-  //       country: req.body.address.country
-
-  //   },
-  //   contacts: {
-
-  //       phones:req.body.contacts.phones,
-  //       email: req.body.contacts.email
-
-  //   },
 };
-//The above method still needs work.
-
 
 exports.loginAuth = async (req, res) => {
   try {
     let { email, password } = req.body;
 
-    let resultdata = await checkUser(email);
+    let resultdata = await axios.get(`${clients.GET.clientByEmail}/${email}`);
 
     // For the given email fetch user from DB
     if (resultdata.data.success) {
@@ -164,10 +121,10 @@ exports.loginAuth = async (req, res) => {
     }
   } catch (err) {
     return {
-      success: false,
-      statusCode: 500,
-      statusText: "Internal Server Error",
-      message: err.message
+      success: err.response.data.success,
+      statusCode: err.response.data.statusCode,
+      statusText: err.response.data.statusText,
+      message: err.response.data.message
     };
   }
 };
