@@ -3,6 +3,7 @@ let jwt = require("jsonwebtoken");
 const { SECRET } = require("../config/config");
 const { clients } = require("../config/medicSoftDbMicroserviceURLs");
 const axios = require("axios");
+const bcrypt = require("bcryptjs");
 
 async function extractToken(req) {
   let tokenHeaders = ["x-access-token", "authorization"];
@@ -30,8 +31,16 @@ async function generateToken(email, clientdata) {
 }
 
 async function generateUser(userDetails) {
+  await bcrypt.hashSync(userDetails.password, SECRET, (err, hash) => {
+    userDetails.password = hash;
+  });
   let resultdata = axios.post(clients.POST.clients, userDetails);
   return resultdata;
+}
+
+async function checkPassword(enteredPassword, storedPassword){
+  let result = await bcrypt.compareSync(enteredPassword, storedPassword);
+  return result;
 }
 
 exports.testAuth = async (req, res, next) => {
@@ -96,7 +105,8 @@ exports.loginAuth = async (req, res) => {
 
     // For the given email fetch user from DB
     if (resultdata.data.success) {
-      if (password == resultdata.data.data.client.password) {
+      let result = await checkPassword(password, resultdata.data.data.client.password);
+      if (result) {
         let token = await generateToken(email, resultdata.data.data.client);
 
         // return the JWT token for the future API calls
