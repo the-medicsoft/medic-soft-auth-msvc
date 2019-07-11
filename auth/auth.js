@@ -1,6 +1,7 @@
 let jwt = require("jsonwebtoken");
 
 const { SECRET } = require("../config/config");
+const { SALT } = require("../config/config");
 const { clients } = require("../config/medicSoftDbMicroserviceURLs");
 const axios = require("axios");
 const bcrypt = require("bcryptjs");
@@ -31,15 +32,13 @@ async function generateToken(email, clientdata) {
 }
 
 async function generateUser(userDetails) {
-  await bcrypt.hashSync(userDetails.password, SECRET, (err, hash) => {
-    userDetails.password = hash;
-  });
+  userDetails.password = bcrypt.hashSync(userDetails.password, SALT)
   let resultdata = axios.post(clients.POST.clients, userDetails);
   return resultdata;
 }
 
 async function checkPassword(enteredPassword, storedPassword){
-  let result = await bcrypt.compareSync(enteredPassword, storedPassword);
+  let result = bcrypt.compareSync(enteredPassword, storedPassword);
   return result;
 }
 
