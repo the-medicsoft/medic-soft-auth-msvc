@@ -33,7 +33,7 @@ async function generateToken(email, clientdata) {
 
 async function generateUser(userDetails) {
   userDetails.password = bcrypt.hashSync(userDetails.password, SALT)
-  let resultdata = axios.post(clients.POST.clients, userDetails);
+  let resultdata = await axios.post(clients.POST.clients, userDetails);
   return resultdata;
 }
 
