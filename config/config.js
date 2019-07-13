@@ -4,5 +4,6 @@ module.exports = {
   PORT: process.env.PORT || 3000,
   LOGGER: true,
   NODE_ENV: process.env.NODE_ENV || "development",
-  medicSoftHost: process.env.medicSoftHost || "http://localhost:4000/"
+  medicSoftHost: process.env.medicSoftHost || "http://localhost:4000/",
+  SALT : process.env.SALT || "$2a$10$O9CyYQ6xChqIXV32NGqApe"
 };
