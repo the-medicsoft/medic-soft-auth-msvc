@@ -5,8 +5,8 @@ exports.generateToken = async (email, data) => {
   try {
     tokendata = {
       email: email,
-      isDoctor: clientdata.isDoctor,
-      isActive: clientdata.isActive
+      isDoctor: data.isDoctor,
+      isActive: data.isActive
     };
     return jwt.sign({ tokendata }, SECRET, {
       expiresIn: "24h" /* expires in 24 hours */
@@ -16,7 +16,7 @@ exports.generateToken = async (email, data) => {
   }
 };
 
-exports.extractToken = async (req) => {
+exports.extractToken = async req => {
   try {
     let tokenHeaders = ["x-access-token", "authorization"];
 
