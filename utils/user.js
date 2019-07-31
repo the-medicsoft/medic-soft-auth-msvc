@@ -9,7 +9,6 @@ exports.generateUser = async userDetails => {
       return await requests.registerUser(userDetails);
     }
   } catch (err) {
-    console.log(err);
-    return err.response;
+    throw err;
   }
 };

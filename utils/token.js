@@ -12,7 +12,7 @@ exports.generateToken = async (email, data) => {
       expiresIn: "24h" /* expires in 24 hours */
     });
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
 
@@ -30,6 +30,6 @@ exports.extractToken = async req => {
 
     return token;
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };

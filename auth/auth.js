@@ -1,61 +1,7 @@
 let jwt = require("jsonwebtoken");
 
 const { SECRET } = require("../config/config");
-// const { SALT } = require("../config/config");
-// const { clients } = require("../config/medicSoftDbMicroserviceURLs");
-// const axios = require("axios");
-// const bcrypt = require("bcryptjs");
 const utils = require("../utils/index");
-
-// async function extractToken(req) {
-//   let tokenHeaders = ["x-access-token", "authorization"];
-
-//   let token = "";
-
-//   for (let tokenHeader of tokenHeaders) {
-//     if (tokenHeader in req.headers) {
-//       token = req.headers[tokenHeader];
-//     }
-//   }
-
-//   return token;
-// }
-
-// async function generateToken(email, clientdata) {
-//   tokendata = {
-//     email: email,
-//     isDoctor: clientdata.isDoctor,
-//     isActive: clientdata.isActive
-//   };
-//   return jwt.sign({ tokendata }, SECRET, {
-//     expiresIn: "24h" /* expires in 24 hours */
-//   });
-// }
-
-// async function generateUser(userDetails) {
-//   if (validatePassword(userDetails)) {
-//     userDetails.password = bcrypt.hashSync(userDetails.password, SALT);
-//     let resultdata = await axios.post(clients.POST.clients, userDetails);
-//     return resultdata;
-//   }
-
-//   function validatePassword(userDetails) {
-//     if ("password" in userDetails) {
-//       if (userDetails.password.length !== 0) {
-//         return true;
-//       } else {
-//         throw new Error("Illegal arguments: password cannot be empty");
-//       }
-//     } else {
-//       throw new Error("Illegal arguments: password is missing");
-//     }
-//   }
-// }
-
-// async function checkPassword(enteredPassword, storedPassword) {
-//   let result = bcrypt.compareSync(enteredPassword, storedPassword);
-//   return result;
-// }
 
 exports.testAuth = async (req, res, next) => {
   try {

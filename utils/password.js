@@ -10,6 +10,6 @@ exports.validatePassword = async userDetails => {
       throw new Error("Illegal arguments: password is missing");
     }
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
