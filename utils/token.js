@@ -19,17 +19,35 @@ exports.generateToken = async (email, data) => {
 exports.extractToken = async req => {
   try {
     let tokenHeaders = ["x-access-token", "authorization"];
-
     let token = "";
-
     for (let tokenHeader of tokenHeaders) {
       if (tokenHeader in req.headers) {
         token = req.headers[tokenHeader];
       }
     }
-
     return token;
   } catch (err) {
     throw err;
   }
 };
+
+exports.verifyToken = async (token) => {
+  try {
+    jwt.verify(token, SECRET, (err, decoded) => {
+      if(err) {
+        let result = {
+          success: false,
+          message: "Token is not valid"
+        }
+      }
+      else {
+        let result = {
+          decoded
+        }
+      }
+    })
+    return result;
+  } catch (err) {
+    throw err;
+  }
+}
