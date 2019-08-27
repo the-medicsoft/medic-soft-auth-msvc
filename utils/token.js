@@ -31,23 +31,24 @@ exports.extractToken = async req => {
   }
 };
 
-exports.verifyToken = async (token) => {
+exports.verifyToken = async token => {
   try {
+    console.log("test");
+    let result;
     jwt.verify(token, SECRET, (err, decoded) => {
-      if(err) {
-        let result = {
+      if (err) {
+        result = {
           success: false,
           message: "Token is not valid"
-        }
-      }
-      else {
-        let result = {
+        };
+      } else {
+        result = {
           decoded
-        }
+        };
       }
-    })
+    });
     return result;
   } catch (err) {
     throw err;
   }
-}
+};

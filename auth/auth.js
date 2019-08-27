@@ -1,6 +1,3 @@
-let jwt = require("jsonwebtoken");
-
-const { SECRET } = require("../config/config");
 const utils = require("../utils/index");
 
 exports.testAuth = async (req, res, next) => {
@@ -8,17 +5,8 @@ exports.testAuth = async (req, res, next) => {
     let token = await utils.token.extractToken(req);
 
     if (token) {
-      jwt.verify(token, SECRET, (err, decoded) => {
-        if (err) {
-          res.send({
-            success: false,
-            message: "Token is not valid"
-          });
-        } else {
-          res.send({ decoded });
-          next();
-        }
-      });
+      let result = await utils.token.verifyToken(token);
+      res.send(result.decoded);
     } else {
       res.send({
         success: false,
