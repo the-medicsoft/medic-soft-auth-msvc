@@ -1,4 +1,5 @@
 const config = require("./config/config");
+const cors = require("cors");
 
 const { NODE_ENV = config.NODE_ENV } = process.env;
 
@@ -8,21 +9,13 @@ if (NODE_ENV !== "production") {
 
 const v1ApiRoutes = require("./routes/v1/");
 
-const {
-  HOST = config.HOST,
-  PORT = config.PORT
-} = process.env;
+const { HOST = config.HOST, PORT = config.PORT } = process.env;
 
 const fastify = require("fastify")({
   logger: NODE_ENV !== "production" ? process.env.LOGGER : false
 });
 
-fastify.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Headers", "origin, token, x-origin, auth");
-  res.setHeader("Access-Control-Allow-Methods", "OPTIONS, GET, POST, PUT, DELETE");
-  next();
-});
+fastify.use(cors());
 
 // register API routes
 for (let apiRoute of v1ApiRoutes) {
@@ -31,7 +24,9 @@ for (let apiRoute of v1ApiRoutes) {
   }
 }
 
-fastify.get("/", (req, res) => res.send("Welcome to The MedicSoft Auth Service"));
+fastify.get("/", (req, res) =>
+  res.send("Welcome to The MedicSoft Auth Service")
+);
 
 // Run the server!
 fastify.listen(PORT, HOST, err => {
